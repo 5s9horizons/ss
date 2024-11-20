@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SS Website</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        :root {
+            --primary-bg: #1a1a2e;
+            --secondary-bg: #16213e;
+            --accent-color: #e94560;
+            --text-color: #ffffff;
+        }
+
+        body {
+            background: var(--primary-bg);
+            color: var(--text-color);            
+            min-height: 100vh;
+        }
+
+        /* Header Styles */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: var(--secondary-bg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            z-index: 100;
+        }
+
+        .left-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .hamburger, .search-icon, .close-icon {
+            cursor: pointer;
+            font-size: 24px;
+            background: none;
+            border: none;
+            color: var(--accent-color);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--accent-color);
+        }
+
+        /* Navigation Menu Styles */
+        .nav-menu {
+            position: fixed;
+            top: 0;
+            left: -80%;
+            width: 80%;
+            height: 100vh;
+            background: var(--primary-bg);
+            transition: 0.3s;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .nav-menu.active {
+            left: 0;
+        }
+
+        .nav-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 999;
+        }
+
+        .nav-overlay.active {
+            display: block;
+        }
+
+        .nav-menu ul {
+            list-style: none;
+            margin-top: 30px;
+        }
+
+        .nav-menu ul li {
+            margin: 20px 0;
+        }
+
+        .nav-menu ul li a {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-size: 18px;
+        }
+
+        /* Search Overlay Styles */
+        .search-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.7));  /* Darker overlay */
+            display: none;
+            justify-content: top;
+            align-items: center;
+            flex-direction: column;
+            z-index: 1001;
+        }
+
+        .search-overlay.active {
+            display: flex;
+        }
+
+        .search-container {
+            width: 90%;
+            max-width: 700px;
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-color);
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .search-bar::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .suggestions {
+            color: var(--text-color);
+            text-align: center;
+        }
+
+        .suggestion-item {
+            margin: 10px 0;
+            cursor: pointer;
+        }
+
+        /* Filter Bar Styles */
+        .filter-bar {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            right: 0;
+            height: 50px;
+            background: var(--secondary-bg);
+            overflow-x: auto;
+            white-space: nowrap;
+            padding: 10px;
+            z-index: 99;
+        }
+
+        .filter-bar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .filter-option {
+            display: inline-block;
+            padding: 5px 15px;
+            margin: 0 5px;
+            border: 1px solid var(--text-color);
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        .filter-option.active {
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+        }
+
+        /* Main Content Area */
+        main {
+            margin-top: 120px;
+            padding: 20px;
+        }
+        
+        .favorite-btn.active {
+            color: var(--accent);
+        }
+
+        .masonry-grid {
+            column-count: 1;
+            column-gap: 1rem;
+            padding: 1rem;
+        }
+
+        @media (min-width: 640px) {
+            .masonry-grid {
+                column-count: 2;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .masonry-grid {
+                column-count: 3;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .masonry-grid {
+                column-count: 4;
+            }
+
+            .desktop-nav {
+                display: flex;
+            }
+
+            .mobile-menu-btn {
+                display: none;
+            }
+        }
+
+        .image-card {
+            break-inside: avoid;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="left-section">
+            <button class="hamburger"><i class="fas fa-bars"></i></button>
+            <div class="logo">SS</div>
+        </div>
+        <button class="search-icon"><i class="fas fa-search"></i></button>
+    </header>
+
+    <nav class="nav-menu">
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="favorites.html">Favorites</a></li>
+        </ul>
+    </nav>
+    <div class="nav-overlay"></div>
+
+    <div class="search-overlay">
+        <button class="close-icon">✕</button>
+        <div class="search-container">
+            <input type="text" class="search-bar" placeholder="Search & Discover">
+            <div class="suggestions">
+                <div class="suggestion-item">Erza</div>
+                <div class="suggestion-item">Itachi</div>
+                <div class="suggestion-item">Gol</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="filter-bar">
+      <div class="filter-option active">All</div>
+      <div class="filter-option">Unknown</div>
+      <div class="filter-option">One Piece</div>
+      <div class="filter-option">Bleach</div>
+      <div class="filter-option">Naruto Shippuden</div>
+      <div class="filter-option">SNK</div>
+      <div class="filter-option">MHA</div>
+      <div class="filter-option">Fairy Tail</div>
+      <div class="filter-option">Death Note</div>   
+      <div class="filter-option">Seven Deadly Sins</div>
+      <div class="filter-option">OPM</div>
+      <div class="filter-option">Food Wars</div>
+      <div class="filter-option">Kuroko no basuke</div>
+      <div class="filter-option">Fate</div>
+      <div class="filter-option">One Punch Man</div>
+      <div class="filter-option">Kingdom</div>
+      <div class="filter-option">The promised never land</div>
+      <div class="filter-option">Black Butler</div>
+      <div class="filter-option">Saint Seiya</div>
+      <div class="filter-option">Ace of Diamond</div>
+      <div class="filter-option">Tonari no Kaibutsu-Kun</div>
+        
+        
+        
+        <div class="filter-option"></div>
+        <div class="filter-option"></div>
+        <div class="filter-option"></div>
+        <div class="filter-option"></div>
+        <div class="filter-option"></div>
+        <div class="filter-option"></div>
+        <div class="filter-option"></div>
+        
+    </div>
+
+    <main class="pt-20">
+        <div class="masonry-grid">
+            <!-- Artworks will be dynamically added by JavaScript -->
+        </div>
+    </main>
+
+    <script>
+      // Hamburger Menu Functionality
+        const hamburger = document.querySelector('.hamburger');
+        const navMenu = document.querySelector('.nav-menu');
+        const navOverlay = document.querySelector('.nav-overlay');
+
+        hamburger.addEventListener('click', () => {
+            navMenu.classList.add('active');
+            navOverlay.classList.add('active');
+        });
+
+        navOverlay.addEventListener('click', () => {
+            navMenu.classList.remove('active');
+            navOverlay.classList.remove('active');
+        });
+
+        // Search Overlay Functionality
+        const searchIcon = document.querySelector('.search-icon');
+        const searchOverlay = document.querySelector('.search-overlay');
+        const closeIcon = document.querySelector('.close-icon');
+
+        searchIcon.addEventListener('click', () => {
+            searchOverlay.classList.add('active');
+        });
+
+        closeIcon.addEventListener('click', () => {
+            searchOverlay.classList.remove('active');
+        });
+        
+        // Updated search functionality
+    const searchBar = document.querySelector('.search-bar');
+    const suggestionItems = document.querySelectorAll('.suggestion-item');
+
+    // Enhanced search suggestions
+    suggestionItems.forEach(item => {
+        item.addEventListener('click', () => {
+            // Auto-paste suggestion and trigger search
+            searchBar.value = item.textContent;
+            performSearch(searchBar.value);
+        });
+    });
+
+    // Search function
+    function performSearch(query) {
+        // Filter artworks based on search query
+        const filteredArtworks = artworks.filter(artwork => 
+            artwork.title.toLowerCase().includes(query.toLowerCase())
+        );
+
+        // Render filtered results
+        renderArtworks(filteredArtworks);
+
+        // Close search overlay after search
+        searchOverlay.classList.remove('active');
+    }
+
+    // Add event listener for search bar
+    searchBar.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            performSearch(searchBar.value);
+        }
+    });
+    
+        
+        // Sample art data
+const artworks = [
+    { 
+        id: 1, 
+        title: 'Escanor', 
+        category: ['All', 'Seven Deadly Sins'], 
+        imgSrc: 'img/art1.jpg' 
+    },
+    { 
+        id: 2, 
+        title: 'Gray Fullbuster', 
+        category: ['All', 'Fairy Tail'], 
+        imgSrc: 'img/art2.jpg' 
+    },
+    { 
+        id: 3, 
+        title: 'Grimmjow Jaegerjaquez', 
+        category: ['All', 'Bleach'], 
+        imgSrc: 'img/art3.jpg' 
+    },
+    { 
+        id: 4, 
+        title: 'M. D. Luffy', 
+        category: ['All', 'One Piece'], 
+        imgSrc: 'img/art4.jpg' 
+    },
+    { 
+        id: 5, 
+        title: 'Shintaro Midorima', 
+        category: ['All', 'Kuroko no basuke'], 
+        imgSrc: 'img/art5.jpg' 
+    },
+    { 
+        id: 6, 
+        title: 'Shirou Kotomine', 
+        category: ['All', 'Fate'], 
+        imgSrc: 'img/art6.jpg' 
+    },
+    { 
+        id: 7, 
+        title: 'Erza Scarlet', 
+        category: ['All', 'Fairy Tail'], 
+        imgSrc: 'img/art7.jpg' 
+    },
+    { 
+        id: 8, 
+        title: 'Natsu Dragneel', 
+        category: ['All', 'Fairy Tail'], 
+        imgSrc: 'img/art8.jpg' 
+    },
+    { 
+        id: 9, 
+        title: 'Natsu Dragneel', 
+        category: ['All', 'Fairy Tail'], 
+        imgSrc: 'img/art9.jpg' 
+    },
+    { 
+        id: 10, 
+        title: 'Natsu Dragneel', 
+        category: ['All', 'Fairy Tail'], 
+        imgSrc: 'img/art10.jpg' 
+    },
+    { 
+        id: 11, 
+        title: 'M. D. Luffy', 
+        category: ['All', 'One Piece'], 
+        imgSrc: 'img/art11.jpg' 
+    },
+    { 
+        id: 12, 
+        title: 'Garu', 
+        category: ['All', 'One Punch Man'], 
+        imgSrc: 'img/art12.jpg' 
+    },
+    { 
+        id: 13, 
+        title: 'Erza Scarlet', 
+        category: ['All', 'Fairy Tail'], 
+        imgSrc: 'img/art13.jpg' 
+    },
+    { 
+        id: 14, 
+        title: 'Naruto', 
+        category: ['All', 'Naruto Shippuden'], 
+        imgSrc: 'img/art14.jpg' 
+    },
+    { 
+        id: 15, 
+        title: 'Sting Eucliffe',
+        category: ['All', 'Fairy Tail'], 
+        imgSrc: 'img/art15.jpg' 
+    },
+    { 
+        id: 16, 
+        title: 'Ulquiorra Cifer', 
+        category: ['All', 'Bleach'], 
+        imgSrc: 'img/art16.jpg' 
+    },
+    { 
+        id: 17, 
+        title: 'Rin Nohara', 
+        category: ['All', 'Naruto Shippuden'], 
+        imgSrc: 'img/art17.jpg' 
+    },
+    { 
+        id: 18, 
+        title: 'Yoruichi Shihouin', 
+        category: ['All', 'Bleach'], 
+        imgSrc: 'img/art18.jpg' 
+    },
+    { 
+        id: 19, 
+        title: 'Kakashi Hatake', 
+        category: ['All', 'Naruto Shippuden'], 
+        imgSrc: 'img/art19.jpg' 
+    },
+    { 
+        id: 20, 
+        title: 'Mirio Togata', 
+        category: ['All', 'MHA'], 
+        imgSrc: 'img/art20.jpg' 
+    },
+    { 
+        id: 21, 
+        title: 'Zeref Dragneel', 
+        category: ['All', 'Fairy Tail'], 
+        imgSrc: 'img/art21.jpg' 
+    },
+    { 
+        id: 22, 
+        title: 'Erwin Smith', 
+        category: ['All', 'SNK'], 
+        imgSrc: 'img/art22.jpg' 
+    },
+    { 
+        id: 23, 
+        title: 'Naruto Uzumaki', 
+        category: ['All', 'Naruto Shippuden'], 
+        imgSrc: 'img/art23.jpg' 
+    },
+    { 
+        id: 24, 
+        title: 'Uchiha Itachi', 
+        category: ['All', 'Naruto Shippuden'], 
+        imgSrc: 'img/art24.jpg' 
+    },
+    { 
+        id: 25, 
+        title: 'Artwork Number 25', 
+        category: ['All', 'Unknown'], 
+        imgSrc: 'img/art25.jpg' 
+    },
+    { 
+        id: 26, 
+        title: 'Artwork Number 26', 
+        category: ['All', 'Unknown'], 
+        imgSrc: 'img/art26.jpg' 
+    },
+    { 
+        id: 27, 
+        title: 'Minoru Tanaka', 
+        category: ['All', 'Death Note'], 
+        imgSrc: 'img/art27.jpg' 
+    },
+    { 
+        id: 28, 
+        title: 'Lucy Heartfilia', 
+        category: ['All', 'Fairy Tail'], 
+        imgSrc: 'img/art28.jpg' 
+    },
+    { 
+        id: 29, 
+        title: 'Saitama', 
+        category: ['All', 'OPM'], 
+        imgSrc: 'img/art29.jpg' 
+    },
+    { 
+        id: 30, 
+        title: 'Soma Yukihira', 
+        category: ['All', 'Food Wars'], 
+        imgSrc: 'img/art30.jpg' 
+    },
+    { 
+        id: 31, 
+        title: 'Don Quixote Rosinante', 
+        category: ['All', 'One Piece'], 
+        imgSrc: 'img/art31.jpg' 
+    },
+    { 
+        id: 32, 
+        title: 'Emma & Norman', 
+        category: ['All', 'The promised never land'], 
+        imgSrc: 'img/art32.jpg' 
+    },
+    { 
+        id: 33, 
+        title: 'Shaka', 
+        category: ['All', 'Saint Seiya'], 
+        imgSrc: 'img/art33.jpg' 
+    },
+    { 
+        id: 34, 
+        title: 'Agni', 
+        category: ['All', 'Black Butler'], 
+        imgSrc: 'img/art34.jpg' 
+    },
+    { 
+        id: 35, 
+        title: 'Artwork Number 35', 
+        category: ['All', 'Unknown'], 
+        imgSrc: 'img/art35.jpg' 
+    },
+    { 
+        id: 36, 
+        title: 'Seijūrō Akashi', 
+        category: ['All', 'Kuroko no basuke'], 
+        imgSrc: 'img/art36.jpg' 
+    },
+    { 
+        id: 37, 
+        title: 'Eijun Sawamura', 
+        category: ['All', 'Ace of Diamond'], 
+        imgSrc: 'img/art37.jpg' 
+    },
+    { 
+        id: 38, 
+        title: 'Ignia', 
+        category: ['All', 'Fairy Tail'], 
+        imgSrc: 'img/art38.jpg' 
+    },
+    { 
+        id: 39, 
+        title: 'Meng Tian', 
+        category: ['All', 'Kingdom'], 
+        imgSrc: 'img/art39.jpg' 
+    },
+    { 
+        id: 40, 
+        title: 'Eishi Tsukasa', 
+        category: ['All', 'Food Wars'], 
+        imgSrc: 'img/art40.jpg' 
+    },
+    { 
+        id: 41, 
+        title: 'Gol D. Roger', 
+        category: ['All', 'One Piece'], 
+        imgSrc: 'img/art41.jpg' 
+    },
+    { 
+        id: 42, 
+        title: 'Ri Boku', 
+        category: ['All', 'Kingdom'], 
+        imgSrc: 'img/art42.jpg' 
+    },
+    { 
+        id: 43, 
+        title: 'Artwork Number 43', 
+        category: ['All', 'Unknown'], 
+        imgSrc: 'img/art43.jpg' 
+    },
+    { 
+        id: 44, 
+        title: 'Brandish μ', 
+        category: ['All', 'Fairy Tail'], 
+        imgSrc: 'img/art44.jpg' 
+    },
+    { 
+        id: 45, 
+        title: 'Haru Yoshida', 
+        category: ['All', 'Tonari no Kaibutsu-Kun'], 
+        imgSrc: 'img/art45.jpg' 
+    },
+    { 
+        id: 46, 
+        title: 'Artwork Title 46', 
+        category: ['All', 'Trending'], 
+        imgSrc: 'img/art46.jpg' 
+    },
+    { 
+        id: 47, 
+        title: 'Artwork Title 47', 
+        category: ['All', 'Featured'], 
+        imgSrc: 'img/art47.jpg' 
+    },
+    { 
+        id: 48, 
+        title: 'Artwork Title 48', 
+        category: ['All', 'Popular'], 
+        imgSrc: 'img/art48.jpg' 
+    },
+    { 
+        id: 49, 
+        title: 'Ace & Luffy', 
+        category: ['All', 'One Piece'], 
+        imgSrc: 'img/art49.jpg' 
+    },
+    { 
+        id: 50, 
+        title: 'Yamato', 
+        category: ['All', 'One Piece'], 
+        imgSrc: 'img/art50.jpg' 
+    },
+    { 
+        id: 51, 
+        title: 'Seijūrō Akashi', 
+        category: ['All', 'Kuroko no basuke'], 
+        imgSrc: 'img/art51.jpg' 
+    },
+    { 
+        id: 52, 
+        title: 'M. D. Luffy', 
+        category: ['All', 'One Piece'], 
+        imgSrc: 'img/art52.jpg' 
+    },
+    { 
+        id: 53, 
+        title: 'Artwork Title 53', 
+        category: ['All', 'Trending'], 
+        imgSrc: 'img/art53.jpg' 
+    },
+    { 
+        id: 54, 
+        title: 'Artwork Title 54', 
+        category: ['All', 'Featured'], 
+        imgSrc: 'img/art54.jpg' 
+    },
+    { 
+        id: 55, 
+        title: 'Artwork Title 55', 
+        category: ['All', 'Latest', 'Popular'], 
+        imgSrc: 'img/art55.jpg' 
+    },
+    { 
+        id: 56, 
+        title: 'Artwork Title 56', 
+        category: ['All', 'Trending'], 
+        imgSrc: 'img/art56.jpg' 
+    },
+    { 
+        id: 57, 
+        title: 'M. D. Luffy', 
+        category: ['All', 'One Piece'], 
+        imgSrc: 'img/art57.jpg' 
+    },
+    { 
+        id: 58, 
+        title: 'Artwork Title 58', 
+        category: ['All', 'Popular'], 
+        imgSrc: 'img/art58.jpg' 
+    },
+    { 
+        id: 59, 
+        title: 'Artwork Title 59', 
+        category: ['All', 'Latest'], 
+        imgSrc: 'img/art59.jpg' 
+    },
+    { 
+        id: 60, 
+        title: 'Artwork Title 60', 
+        category: ['All', 'Trending', 'Featured'], 
+        imgSrc: 'img/art60.jpg' 
+    },
+    { 
+        id: 61, 
+        title: 'Artwork Title 61', 
+        category: ['All', 'Latest'], 
+        imgSrc: 'img/art61.jpg' 
+    },
+    { 
+        id: 62, 
+        title: 'Artwork Title 62', 
+        category: ['All', 'Popular'], 
+        imgSrc: 'img/art62.jpg' 
+    },
+    { 
+        id: 63, 
+        title: 'Artwork Title 63', 
+        category: ['All', 'Trending'], 
+        imgSrc: 'img/art63.jpg' 
+    },
+    { 
+        id: 64, 
+        title: 'Artwork Title 64', 
+        category: ['All', 'Featured'], 
+        imgSrc: 'img/art64.jpg' 
+    },
+    { 
+        id: 65, 
+        title: 'Artwork Title 65', 
+        category: ['All', 'Latest', 'Popular'], 
+        imgSrc: 'img/art65.jpg' 
+    },
+    { 
+        id: 66, 
+        title: 'Artwork Title 66', 
+        category: ['All', 'Trending'], 
+        imgSrc: 'img/art66.jpg' 
+    },
+    { 
+        id: 67, 
+        title: 'Artwork Title 67', 
+        category: ['All', 'Featured'], 
+        imgSrc: 'img/art67.jpg' 
+    }
+];
+
+// Function to render artworks
+function renderArtworks(filteredArtworks) {
+    const masonryGrid = document.querySelector('.masonry-grid');
+    
+    // Clear existing artworks
+    masonryGrid.innerHTML = '';
+    
+    // Render filtered artworks
+    filteredArtworks.forEach(artwork => {
+        const artworkCard = document.createElement('div');
+        artworkCard.className = 'image-card bg-gray-800 rounded-lg overflow-hidden';
+        
+        artworkCard.innerHTML = `
+            <img src="${artwork.imgSrc}" alt="${artwork.title}" class="w-full">
+            <div class="p-4">
+                <h3 class="text-lg font-semibold mb-2">${artwork.title}</h3>
+                <div class="flex justify-between items-center">
+                    <button class="favorite-btn hover:text-[#e94560]">
+                        <i class="far fa-heart"></i>
+                    </button>
+                    <button class="share-btn hover:text-[#e94560]">
+                        <i class="fas fa-share-alt"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        masonryGrid.appendChild(artworkCard);
+    });
+
+    // Rebind favorite and share button events
+    bindFavoriteEvents();
+    bindShareEvents();
+}
+
+// Filter Functionality
+function setupFilterOptions() {
+    const filterOptions = document.querySelectorAll('.filter-option');
+
+    filterOptions.forEach(option => {
+        option.addEventListener('click', () => {
+            // Remove active class from all filter options
+            filterOptions.forEach(opt => opt.classList.remove('active'));
+            
+            // Add active class to clicked option
+            option.classList.add('active');
+            
+            // Get the filter category
+            const category = option.textContent;
+            
+            // Filter artworks
+            const filteredArtworks = artworks.filter(artwork => 
+                artwork.category.includes(category)
+            );
+            
+            // Render filtered artworks
+            renderArtworks(filteredArtworks);
+        });
+    });
+}
+
+// Bind favorite button events
+function bindFavoriteEvents() {
+    const favoriteButtons = document.querySelectorAll('.favorite-btn');
+    
+    favoriteButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            btn.classList.toggle('active');
+            const card = btn.closest('.image-card');
+            const imgSrc = card.querySelector('img').src;
+            const title = card.querySelector('h3').textContent;
+            
+            let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+            
+            if (btn.classList.contains('active')) {
+                favorites.push({ imgSrc, title });
+            } else {
+                favorites = favorites.filter(f => f.imgSrc !== imgSrc);
+            }
+            
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+        });
+    });
+}
+
+// Bind share button events
+function bindShareEvents() {
+    const shareButtons = document.querySelectorAll('.share-btn');
+    
+    shareButtons.forEach(btn => {
+        btn.addEventListener('click', async () => {
+            const card = btn.closest('.image-card');
+            const imgSrc = card.querySelector('img').src;
+            const title = card.querySelector('h3').textContent;
+            
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: title,
+                        url: imgSrc
+                    });
+                } catch (err) {
+                    console.error('Share failed:', err);
+                }
+            } else {
+                // Fallback: Copy to clipboard
+                navigator.clipboard.writeText(imgSrc);
+                alert('Link copied to clipboard!');
+            }
+        });
+    });
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', () => {
+    // Initial render of all artworks
+    renderArtworks(artworks);
+    
+    // Setup filter options
+    setupFilterOptions();
+});
+    </script>
+</body>
+</html>

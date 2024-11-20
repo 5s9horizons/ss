@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SS |About us</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        :root {
+            --primary-bg: #1a1a2e;
+            --secondary-bg: #16213e;
+            --accent-color: #e94560;
+            --text-color: #ffffff;
+        }
+
+        body {
+            background: var(--primary-bg);
+            color: var(--text-color);            
+        }
+
+        /* Header Styles */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: var(--secondary-bg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            z-index: 100;
+        }
+
+        .left-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .hamburger, .search-icon, .close-icon {
+            cursor: pointer;
+            font-size: 24px;
+            background: none;
+            border: none;
+            color: var(--accent-color);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--accent-color);
+        }
+
+        /* Navigation Menu Styles */
+        .nav-menu {
+            position: fixed;
+            top: 0;
+            left: -80%;
+            width: 80%;
+            height: 100vh;
+            background: var(--primary-bg);
+            transition: 0.3s;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .nav-menu.active {
+            left: 0;
+        }
+
+        .nav-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 999;
+        }
+
+        .nav-overlay.active {
+            display: block;
+        }
+
+        .nav-menu ul {
+            list-style: none;
+            margin-top: 30px;
+        }
+
+        .nav-menu ul li {
+            margin: 20px 0;
+        }
+
+        .nav-menu ul li a {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-size: 18px;
+        }
+
+        /* Main Content Area */
+        main {
+            margin-top: 120px;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="left-section">
+            <button class="hamburger"><i class="fas fa-bars"></i></button>
+            <div class="logo">SS</div>
+        </div>
+    </header>
+
+    <nav class="nav-menu">
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="favorites.html">Favorites</a></li>
+        </ul>
+    </nav>
+    <div class="nav-overlay"></div>
+
+    <main>
+      <div class="container mx-auto p-6">
+        <h2 class="text-3xl text-[#e94560] mb-4">About SS</h2>
+        <div class="bg-[#1c2b3a] p-6 rounded">
+            <p class="mb-4">
+                SS is a the community-driven platform designed to add more interactivity in the community "NAKAMA LAND" in which the "FREE IMAGE 4K" group belong to.
+            </p>
+        </div>
+      </div>
+    
+      <div class="container mx-auto p-6">
+        <div class="bg-[#1c2b3a] p-6 rounded">
+            <p class="mb-4">
+                Website designed by <a href="https://5s9horizons.github.io/5s9portfolio/">"5s9 Horizons"</a>
+            </p>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      // Hamburger Menu Functionality
+        const hamburger = document.querySelector('.hamburger');
+        const navMenu = document.querySelector('.nav-menu');
+        const navOverlay = document.querySelector('.nav-overlay');
+
+        hamburger.addEventListener('click', () => {
+            navMenu.classList.add('active');
+            navOverlay.classList.add('active');
+        });
+
+        navOverlay.addEventListener('click', () => {
+            navMenu.classList.remove('active');
+            navOverlay.classList.remove('active');
+        });
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', () => {
+});
+    </script>
+</body>
+</html>

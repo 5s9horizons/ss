@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SS Website - Favorites</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        :root {
+            --primary-bg: #1a1a2e;
+            --secondary-bg: #16213e;
+            --accent-color: #e94560;
+            --text-color: #ffffff;
+        }
+
+        body {
+            background: var(--primary-bg);
+            color: var(--text-color);            
+            min-height: 100vh;
+        }
+
+        /* Header Styles */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: var(--secondary-bg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            z-index: 100;
+        }
+
+        .left-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .hamburger, .search-icon, .close-icon {
+            cursor: pointer;
+            font-size: 24px;
+            background: none;
+            border: none;
+            color: var(--accent-color);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--accent-color);
+        }
+
+        /* Navigation Menu Styles */
+        .nav-menu {
+            position: fixed;
+            top: 0;
+            left: -80%;
+            width: 80%;
+            height: 100vh;
+            background: var(--primary-bg);
+            transition: 0.3s;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .nav-menu.active {
+            left: 0;
+        }
+
+        .nav-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 999;
+        }
+
+        .nav-overlay.active {
+            display: block;
+        }
+
+        .nav-menu ul {
+            list-style: none;
+            margin-top: 30px;
+        }
+
+        .nav-menu ul li {
+            margin: 20px 0;
+        }
+
+        .nav-menu ul li a {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-size: 18px;
+        }
+
+        /* Search Overlay Styles */
+        .search-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.9), transparent);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 1001;
+        }
+
+        .search-overlay.active {
+            display: flex;
+        }
+
+        .search-container {
+            width: 80%;
+            max-width: 600px;
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-color);
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .search-bar::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .suggestions {
+            color: var(--text-color);
+            text-align: center;
+        }
+
+        .suggestion-item {
+            margin: 10px 0;
+            cursor: pointer;
+        }
+
+        /* Main Content Area */
+        main {
+            margin-top: 60px;
+            padding: 20px;
+        }
+
+        .masonry-grid {
+            column-count: 2;  /* Mobile default to 2 columns */
+            column-gap: 1rem;
+            padding: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .masonry-grid {
+                column-count: 3;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .masonry-grid {
+                column-count: 4;
+            }
+        }
+
+        .image-card {
+            break-inside: avoid;
+            margin-bottom: 1rem;
+        }
+
+        .no-favorites {
+            text-align: center;
+            color: var(--text-color);
+            font-size: 1.2rem;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="left-section">
+            <button class="hamburger"><i class="fas fa-bars"></i></button>
+            <div class="logo">SS</div>
+        </div>
+        <button class="search-icon"><i class="fas fa-search"></i></button>
+    </header>
+
+    <nav class="nav-menu">
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="#">Favorites</a></li>
+        </ul>
+    </nav>
+    <div class="nav-overlay"></div>
+
+    <div class="search-overlay">
+        <button class="close-icon">✕</button>
+        <div class="search-container">
+            <input type="text" class="search-bar" placeholder="Search & Discover">
+            <div class="suggestions">
+                <div class="suggestion-item">Erza</div>
+                <div class="suggestion-item">Itachi</div>
+                <div class="suggestion-item">Gol</div>
+            </div>
+        </div>
+    </div>
+
+    <main class="pt-20">
+        <div id="favorites-grid" class="masonry-grid">
+            <!-- Favorites will be dynamically populated here -->
+        </div>
+        <div id="no-favorites" class="no-favorites" style="display: none;">
+            No favorites added yet. Start exploring and add some!
+        </div>
+    </main>
+
+    <script>
+        // Hamburger Menu Functionality
+        const hamburger = document.querySelector('.hamburger');
+        const navMenu = document.querySelector('.nav-menu');
+        const navOverlay = document.querySelector('.nav-overlay');
+
+        hamburger.addEventListener('click', () => {
+            navMenu.classList.add('active');
+            navOverlay.classList.add('active');
+        });
+
+        navOverlay.addEventListener('click', () => {
+            navMenu.classList.remove('active');
+            navOverlay.classList.remove('active');
+        });
+
+        // Search Overlay Functionality
+        const searchIcon = document.querySelector('.search-icon');
+        const searchOverlay = document.querySelector('.search-overlay');
+        const closeIcon = document.querySelector('.close-icon');
+
+        searchIcon.addEventListener('click', () => {
+            searchOverlay.classList.add('active');
+        });
+
+        closeIcon.addEventListener('click', () => {
+            searchOverlay.classList.remove('active');
+        });
+
+        // Load Favorites
+        function loadFavorites() {
+            const favoritesGrid = document.getElementById('favorites-grid');
+            const noFavoritesMessage = document.getElementById('no-favorites');
+            const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+
+            if (favorites.length === 0) {
+                noFavoritesMessage.style.display = 'block';
+                favoritesGrid.innerHTML = '';
+                return;
+            }
+
+            noFavoritesMessage.style.display = 'none';
+            favoritesGrid.innerHTML = favorites.map(fav => `
+                <div class="image-card bg-gray-800 rounded-lg overflow-hidden">
+                    <img src="${fav.imgSrc}" alt="${fav.title}" class="w-full">
+                    <div class="p-4">
+                        <h3 class="text-lg font-semibold mb-2">${fav.title}</h3>
+                        <div class="flex justify-between items-center">
+                            <button class="remove-favorite-btn hover:text-[#e94560]" data-src="${fav.imgSrc}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                            <button class="share-btn hover:text-[#e94560]">
+                                <i class="fas fa-share-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Add event listeners to remove favorite buttons
+            document.querySelectorAll('.remove-favorite-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const imgSrc = btn.dataset.src;
+                    let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+                    favorites = favorites.filter(f => f.imgSrc !== imgSrc);
+                    localStorage.setItem('favorites', JSON.stringify(favorites));
+                    loadFavorites();
+                });
+            });
+
+            // Share functionality (same as main page)
+            const shareButtons = document.querySelectorAll('.share-btn');
+        
+            shareButtons.forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const card = btn.closest('.image-card');
+                    const imgSrc = card.querySelector('img').src;
+                    const title = card.querySelector('h3').textContent;
+                    
+                    if (navigator.share) {
+                        try {
+                            await navigator.share({
+                                title: title,
+                                url: imgSrc
+                            });
+                        } catch (err) {
+                            console.error('Share failed:', err);
+                        }
+                    } else {
+                        navigator.clipboard.writeText(imgSrc);
+                        alert('Link copied to clipboard!');
+                    }
+                });
+            });
+        }
+
+        // Load favorites when page loads
+        loadFavorites();
+    </script>
+</body>
+</html>
